@@ -120,6 +120,29 @@ const requestListener = function (req, res) {
       break;
 
     case 'DELETE':
+      if (parseUrl[1] === 'person' && parseUrl[2]) {
+        if (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(parseUrl[2])) {
+          let p = findPerson(parseUrl[2]);
+          if (p) {
+            deletePerson(p);
+            res.statusCode = 204;
+            res.setHeader("Content-Type", "application/json");
+            res.end();
+          }
+          else {
+            res.statusCode = 404;
+            res.end(JSON.stringify({ error: 'Person not found' }));
+          }
+        }
+        else {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: 'It is not valid UUID' }));
+        }
+      }
+      else {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ error: 'Use UUID to delete record' }));
+      }
       break;
     default:
       response.statusCode = 400;
@@ -150,4 +173,13 @@ function findPerson(id) {
       return persons[i];
   }
   return false;
+}
+
+function deletePerson(p) {
+  let index = -1;
+  for (let i = 0; i < persons.length; i++) {
+    if (persons[i].id === p.id)
+      index = i;
+  }
+  persons.splice(index, 1);
 }
