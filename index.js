@@ -1,12 +1,10 @@
 const http = require('http');
+const crypto = require('crypto');
 
 const host = 'localhost';
 const port = 8000;
 
-const persons = [
-  { id: '1', name: 'Perer Roo', age: 25, hobbies: ['tennis', 'gaming'] },
-  { id: '2', name: 'Puth the Bear', age: 42, hobbies: ['honey'] }
-];
+const persons = [];
 
 const requestListener = function (req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -32,7 +30,9 @@ const requestListener = function (req, res) {
 
       req.on('end', () => {
         data = JSON.parse(data);
-        console.log(data);
+        let uuid = crypto.randomUUID();
+        data.id = uuid;
+
         persons.push(data);
         res.statusCode = 201;
         res.setHeader("Content-Type", "application/json");
