@@ -30,13 +30,21 @@ const requestListener = function (req, res) {
 
       req.on('end', () => {
         data = JSON.parse(data);
-        let uuid = crypto.randomUUID();
-        data.id = uuid;
 
-        persons.push(data);
-        res.statusCode = 201;
-        res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify(persons));
+        if (checkProperties(data)) {
+          let uuid = crypto.randomUUID();
+          data.id = uuid;
+
+          persons.push(data);
+          res.statusCode = 201;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify(persons));
+        }
+        else {
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify({ error: 'name, age and hobbies are required fields' }));
+        }
       });
       break;
 
@@ -56,3 +64,14 @@ const server = http.createServer(requestListener);
 server.listen(port, host, () => {
   console.log(`Server is running on http://${host}:${port}`);
 });
+
+function checkProperties(data) {
+  if (!data.name)
+    return false;
+  if (!data.age)
+    return false;
+  if (!Array.isArray(data.hobbies) || !data.hobbies.length)
+    return false;
+
+  return true;
+}
