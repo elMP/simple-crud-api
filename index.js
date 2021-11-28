@@ -42,58 +42,81 @@ const requestListener = function (req, res) {
       }
       break;
     case 'POST':
-      let data = '';
+      if (parseUrl[1] === 'person') {
+        let data = '';
 
-      req.on('data', (chunk) => {
-        data += chunk.toString();
-      });
+        req.on('data', (chunk) => {
+          data += chunk.toString();
+        });
 
-      req.on('end', () => {
-        data = JSON.parse(data);
+        req.on('end', () => {
+          data = JSON.parse(data);
 
-        if (checkProperties(data)) {
-          let uuid = crypto.randomUUID();
-          data.id = uuid;
+          if (checkProperties(data)) {
+            let uuid = crypto.randomUUID();
+            data.id = uuid;
 
-          persons.push(data);
-          res.statusCode = 201;
-          res.setHeader("Content-Type", "application/json");
-          res.end(JSON.stringify(persons));
-        }
-        else {
-          res.statusCode = 400;
-          res.setHeader("Content-Type", "application/json");
-          res.end(JSON.stringify({ error: 'name, age and hobbies are required fields' }));
-        }
-      });
+            persons.push(data);
+            res.statusCode = 201;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify(persons));
+          }
+          else {
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ error: 'name, age and hobbies are required fields' }));
+          }
+        });
+      }
+      else {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ error: 'Resource not found' }));
+      }
       break;
 
     case 'PUT':
-      let data = '';
+      if (parseUrl[1] === 'person' && parseUrl[2]) {
+        let data = '';
 
-      req.on('data', (chunk) => {
-        data += chunk.toString();
-      });
+        req.on('data', (chunk) => {
+          data += chunk.toString();
+        });
 
-      req.on('end', () => {
-        data = JSON.parse(data);
-        /* 
-                if (checkProperties(data)) {
-                  let uuid = crypto.randomUUID();
-                  data.id = uuid;
-        
-                  persons.push(data);
-                  res.statusCode = 201;
-                  res.setHeader("Content-Type", "application/json");
-                  res.end(JSON.stringify(persons));
-                }
-                else {
-                  res.statusCode = 400;
-                  res.setHeader("Content-Type", "application/json");
-                  res.end(JSON.stringify({ error: 'name, age and hobbies are required fields' }));
-                } */
-      });
+        req.on('end', () => {
+          data = JSON.parse(data);
 
+          if (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(parseUrl[2])) {
+            let p = findPerson(parseUrl[2]);
+            if (p) {
+              if (checkProperties(data)) {
+                p.name = data.name;
+                p.age = data.age;
+                p.hobbies = data.hobbies;
+                res.statusCode = 200;
+                res.setHeader("Content-Type", "application/json");
+                res.end(JSON.stringify(p));
+              }
+              else {
+                res.statusCode = 400;
+                res.setHeader("Content-Type", "application/json");
+                res.end(JSON.stringify({ error: 'name, age and hobbies are required fields' }));
+              }
+            }
+            else {
+              res.statusCode = 404;
+              res.end(JSON.stringify({ error: 'Person not found' }));
+            }
+          }
+          else {
+            res.statusCode = 400;
+            res.end(JSON.stringify({ error: 'It is not valid UUID' }));
+          }
+        });
+      }
+      else {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ error: 'Use UUID to update record' }));
+      }
       break;
 
     case 'DELETE':
