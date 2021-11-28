@@ -14,11 +14,13 @@ const requestListener = function (req, res) {
     case 'GET':
       switch (req.url) {
         case '/person':
-          res.writeHead(200);
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          //res.write(JSON.stringify(persons));
           res.end(persons);
           break;
         default:
-          res.writeHead(404);
+          res.statusCode = 404;
           res.end(JSON.stringify({ error: 'Resource not found' }));
       }
       break;
