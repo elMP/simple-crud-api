@@ -1,8 +1,9 @@
 const http = require('http');
 const crypto = require('crypto');
+const dotenv = require('dotenv').config();
 
 const host = 'localhost';
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 const persons = [];
 
