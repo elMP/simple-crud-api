@@ -1,36 +1,41 @@
-## Установка
-Склонировать репозиторий git clone https://github.com/elMP/simple-crud-api.git -b task3-simple-crud-api
+## Install
 
-## Запуск
-Перейти в созданный при установке каталог simple-crud-api  
-Выполнить команду node index.js   
+Clone repo git clone https://github.com/elMP/simple-crud-api.git -b task3-simple-crud-api
 
-В консоли будет получено сообщение Server is running on http://localhost:8000  
+## Run
 
-Приложение запустится на 8000 порту  
+Change directory to simple-crud-api  
+Run npm install
+Run command node index.js
 
-## Использование
+View message in console: Server is running on http://localhost:4000
 
-Доступны следующие функции:
+Now server is running on port 8000
 
-1. Получить данные о всех person. Для этого выполнить GET запрос http://localhost:8000/person/
-До добавления записей будет получен пустой ответ.
+To change port edit PORT variable in .env file
 
-2. Получить данные о конкретном person. Для этого выполнить GET запрос http://localhost:8000/person/{UUID} где
-{UUID} - id конкретной записи
+## Usage
 
-3. Добавить person. Для этого выполнить POST запрос http://localhost:8000/person/
-Обязательные поля:
-name - строка
-age - число
-hobbies - массив строк
+You can test next functions:
 
-4. Удалить person. Для этого выполнить DELETE запрос http://localhost:8000/person/{UUID} где
-{UUID} - id конкретной записи
+1. Get all users. Run GET request http://localhost:8000/users/
+   Before adding users you get empty array.
 
-5. Обновить person. Для этого выполнить PUT запрос http://localhost:8000/person/{UUID} где
-{UUID} - id конкретной записи  
-Обязательные поля:
-name - строка
-age - число
-hobbies - массив строк
+2. Get user by UUID. Run GET request http://localhost:8000/person/{UUID} where
+   {UUID} - user id
+
+3. Add user. Run POST request http://localhost:8000/users/
+   Required fields:
+   username - string
+   age - number
+   hobbies - array of string
+
+4. Delete user. Run DELETE request http://localhost:8000/person/{UUID} where
+   {UUID} - user id
+
+5. Update person. Run PUT request http://localhost:8000/person/{UUID} where
+   {UUID} - user id  
+   Required fields:
+   username - string
+   age - number
+   hobbies - array of string
