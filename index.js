@@ -50,22 +50,32 @@ const requestListener = function (req, res) {
         });
 
         req.on('end', () => {
-          data = JSON.parse(data);
+          try {
+            data = JSON.parse(data);
 
-          if (checkProperties(data)) {
-            let uuid = crypto.randomUUID();
-            data.id = uuid;
+            if (checkProperties(data)) {
+              let uuid = crypto.randomUUID();
+              data.id = uuid;
 
-            persons.push(data);
-            res.statusCode = 201;
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(persons[persons.length - 1]));
-          } else {
+              persons.push(data);
+              res.statusCode = 201;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify(persons[persons.length - 1]));
+            } else {
+              res.statusCode = 400;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(
+                JSON.stringify({
+                  error: 'username, age and hobbies are required fields',
+                })
+              );
+            }
+          } catch (e) {
             res.statusCode = 400;
             res.setHeader('Content-Type', 'application/json');
             res.end(
               JSON.stringify({
-                error: 'username, age and hobbies are required fields',
+                error: 'wrong data',
               })
             );
           }
