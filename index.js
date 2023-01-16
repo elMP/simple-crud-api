@@ -65,7 +65,7 @@ const requestListener = function (req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.end(
               JSON.stringify({
-                error: 'name, age and hobbies are required fields',
+                error: 'username, age and hobbies are required fields',
               })
             );
           }
@@ -106,7 +106,7 @@ const requestListener = function (req, res) {
                 res.setHeader('Content-Type', 'application/json');
                 res.end(
                   JSON.stringify({
-                    error: 'name, age and hobbies are required fields',
+                    error: 'username, age and hobbies are required fields',
                   })
                 );
               }
@@ -164,7 +164,7 @@ server.listen(port, host, () => {
 });
 
 function checkProperties(data) {
-  if (!data.name) return false;
+  if (!data.username) return false;
   if (!data.age) return false;
   if (!Array.isArray(data.hobbies)) return false;
 
