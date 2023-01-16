@@ -96,38 +96,48 @@ const requestListener = function (req, res) {
         });
 
         req.on('end', () => {
-          data = JSON.parse(data);
+          try {
+            data = JSON.parse(data);
 
-          if (
-            /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
-              parseUrl[2]
-            )
-          ) {
-            let p = findPerson(parseUrl[2]);
-            if (p) {
-              if (checkProperties(data)) {
-                p.name = data.name;
-                p.age = data.age;
-                p.hobbies = data.hobbies;
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify(p));
+            if (
+              /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+                parseUrl[2]
+              )
+            ) {
+              let p = findPerson(parseUrl[2]);
+              if (p) {
+                if (checkProperties(data)) {
+                  p.name = data.name;
+                  p.age = data.age;
+                  p.hobbies = data.hobbies;
+                  res.statusCode = 200;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify(p));
+                } else {
+                  res.statusCode = 400;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(
+                    JSON.stringify({
+                      error: 'username, age and hobbies are required fields',
+                    })
+                  );
+                }
               } else {
-                res.statusCode = 400;
-                res.setHeader('Content-Type', 'application/json');
-                res.end(
-                  JSON.stringify({
-                    error: 'username, age and hobbies are required fields',
-                  })
-                );
+                res.statusCode = 404;
+                res.end(JSON.stringify({ error: 'User not found' }));
               }
             } else {
-              res.statusCode = 404;
-              res.end(JSON.stringify({ error: 'User not found' }));
+              res.statusCode = 400;
+              res.end(JSON.stringify({ error: 'It is not valid UUID' }));
             }
-          } else {
+          } catch (e) {
             res.statusCode = 400;
-            res.end(JSON.stringify({ error: 'It is not valid UUID' }));
+            res.setHeader('Content-Type', 'application/json');
+            res.end(
+              JSON.stringify({
+                error: 'wrong data',
+              })
+            );
           }
         });
       } else {
