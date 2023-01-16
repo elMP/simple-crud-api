@@ -59,7 +59,7 @@ const requestListener = function (req, res) {
             persons.push(data);
             res.statusCode = 201;
             res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(persons));
+            res.end(JSON.stringify(persons[persons.length - 1]));
           } else {
             res.statusCode = 400;
             res.setHeader('Content-Type', 'application/json');
