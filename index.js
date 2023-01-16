@@ -25,7 +25,7 @@ const requestListener = function (req, res) {
             res.end(JSON.stringify(p));
           } else {
             res.statusCode = 404;
-            res.end(JSON.stringify({ error: 'Users not found' }));
+            res.end(JSON.stringify({ error: 'User not found' }));
           }
         } else {
           res.statusCode = 400;
