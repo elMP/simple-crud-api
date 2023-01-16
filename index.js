@@ -12,37 +12,37 @@ const requestListener = function (req, res) {
 
   switch (req.method) {
     case 'GET':
-      if (parseUrl[1] === 'person' && parseUrl[2]) {
-        if (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(parseUrl[2])) {
+      if (parseUrl[1] === 'users' && parseUrl[2]) {
+        if (
+          /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+            parseUrl[2]
+          )
+        ) {
           let p = findPerson(parseUrl[2]);
           if (p) {
             res.statusCode = 200;
-            res.setHeader("Content-Type", "application/json");
+            res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(p));
-          }
-          else {
+          } else {
             res.statusCode = 404;
-            res.end(JSON.stringify({ error: 'Person not found' }));
+            res.end(JSON.stringify({ error: 'Users not found' }));
           }
-        }
-        else {
+        } else {
           res.statusCode = 400;
           res.end(JSON.stringify({ error: 'It is not valid UUID' }));
         }
-      }
-      else if (parseUrl[1] === 'person') {
+      } else if (parseUrl[1] === 'users') {
         res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
+        res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(persons));
         break;
-      }
-      else {
+      } else {
         res.statusCode = 404;
         res.end(JSON.stringify({ error: 'Resource not found' }));
       }
       break;
     case 'POST':
-      if (parseUrl[1] === 'person') {
+      if (parseUrl[1] === 'users') {
         let data = '';
 
         req.on('data', (chunk) => {
@@ -58,24 +58,26 @@ const requestListener = function (req, res) {
 
             persons.push(data);
             res.statusCode = 201;
-            res.setHeader("Content-Type", "application/json");
+            res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(persons));
-          }
-          else {
+          } else {
             res.statusCode = 400;
-            res.setHeader("Content-Type", "application/json");
-            res.end(JSON.stringify({ error: 'name, age and hobbies are required fields' }));
+            res.setHeader('Content-Type', 'application/json');
+            res.end(
+              JSON.stringify({
+                error: 'name, age and hobbies are required fields',
+              })
+            );
           }
         });
-      }
-      else {
+      } else {
         res.statusCode = 404;
         res.end(JSON.stringify({ error: 'Resource not found' }));
       }
       break;
 
     case 'PUT':
-      if (parseUrl[1] === 'person' && parseUrl[2]) {
+      if (parseUrl[1] === 'users' && parseUrl[2]) {
         let data = '';
 
         req.on('data', (chunk) => {
@@ -85,7 +87,11 @@ const requestListener = function (req, res) {
         req.on('end', () => {
           data = JSON.parse(data);
 
-          if (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(parseUrl[2])) {
+          if (
+            /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+              parseUrl[2]
+            )
+          ) {
             let p = findPerson(parseUrl[2]);
             if (p) {
               if (checkProperties(data)) {
@@ -93,60 +99,61 @@ const requestListener = function (req, res) {
                 p.age = data.age;
                 p.hobbies = data.hobbies;
                 res.statusCode = 200;
-                res.setHeader("Content-Type", "application/json");
+                res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify(p));
-              }
-              else {
+              } else {
                 res.statusCode = 400;
-                res.setHeader("Content-Type", "application/json");
-                res.end(JSON.stringify({ error: 'name, age and hobbies are required fields' }));
+                res.setHeader('Content-Type', 'application/json');
+                res.end(
+                  JSON.stringify({
+                    error: 'name, age and hobbies are required fields',
+                  })
+                );
               }
-            }
-            else {
+            } else {
               res.statusCode = 404;
-              res.end(JSON.stringify({ error: 'Person not found' }));
+              res.end(JSON.stringify({ error: 'User not found' }));
             }
-          }
-          else {
+          } else {
             res.statusCode = 400;
             res.end(JSON.stringify({ error: 'It is not valid UUID' }));
           }
         });
-      }
-      else {
+      } else {
         res.statusCode = 404;
         res.end(JSON.stringify({ error: 'Use UUID to update record' }));
       }
       break;
 
     case 'DELETE':
-      if (parseUrl[1] === 'person' && parseUrl[2]) {
-        if (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(parseUrl[2])) {
+      if (parseUrl[1] === 'users' && parseUrl[2]) {
+        if (
+          /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+            parseUrl[2]
+          )
+        ) {
           let p = findPerson(parseUrl[2]);
           if (p) {
             deletePerson(p);
             res.statusCode = 204;
-            res.setHeader("Content-Type", "application/json");
+            res.setHeader('Content-Type', 'application/json');
             res.end();
-          }
-          else {
+          } else {
             res.statusCode = 404;
-            res.end(JSON.stringify({ error: 'Person not found' }));
+            res.end(JSON.stringify({ error: 'User not found' }));
           }
-        }
-        else {
+        } else {
           res.statusCode = 400;
           res.end(JSON.stringify({ error: 'It is not valid UUID' }));
         }
-      }
-      else {
+      } else {
         res.statusCode = 404;
         res.end(JSON.stringify({ error: 'Use UUID to delete record' }));
       }
       break;
     default:
       response.statusCode = 400;
-      response.write("No Response");
+      response.write('No Response');
       response.end();
   }
 };
@@ -157,20 +164,16 @@ server.listen(port, host, () => {
 });
 
 function checkProperties(data) {
-  if (!data.name)
-    return false;
-  if (!data.age)
-    return false;
-  if (!Array.isArray(data.hobbies) || !data.hobbies.length)
-    return false;
+  if (!data.name) return false;
+  if (!data.age) return false;
+  if (!Array.isArray(data.hobbies)) return false;
 
   return true;
 }
 
 function findPerson(id) {
   for (let i = 0; i < persons.length; i++) {
-    if (persons[i].id === id)
-      return persons[i];
+    if (persons[i].id === id) return persons[i];
   }
   return false;
 }
@@ -178,8 +181,7 @@ function findPerson(id) {
 function deletePerson(p) {
   let index = -1;
   for (let i = 0; i < persons.length; i++) {
-    if (persons[i].id === p.id)
-      index = i;
+    if (persons[i].id === p.id) index = i;
   }
   persons.splice(index, 1);
 }
